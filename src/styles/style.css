@@ -1,0 +1,12 @@
+.form1{
+    margin: 2rem 20rem;
+    border: 0.2rem solid blueviolet ;
+    background-color: aquamarine;
+    font-weight: 200;
+    align-items: center;
+    max-height: fit-content;
+}
+
+p{
+    color: brown;
+}
