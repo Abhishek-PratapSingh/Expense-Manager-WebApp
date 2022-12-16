@@ -39,6 +39,7 @@ const Setting = () => {
     e.preventDefault();
     setCategory(category => [...category, ctg]);
     console.log(category)
+    alert('catergory added')
     // console.log("hi")
    }
 
@@ -199,8 +200,8 @@ const Setting = () => {
 
                      { i > 0 ? 
                      <td> 
-                         <button onClick={e=>{}} > Edit</button>
-                         <button onClick={e=>{deleteExpense(i)}} > Delete</button>
+                         <button onClick={e=>{}} style={{backgroundColor:"LightGreen"}} > Edit</button>
+                         <button onClick={e=>{deleteExpense(i)}} style={{backgroundColor:"Orange"}} > Delete</button>
                      </td>
 
                       : 
