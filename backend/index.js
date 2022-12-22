@@ -41,7 +41,7 @@ app.post("/login", (req, res)=> {
 
 app.post("/budget/:id", async(req, res)=> {
     const id  = req.params.id
-    console.log(id)
+    console.log("id is: " + id)
     const newBudget= await new Budget({
         userId: id ,
         amount: req.body.budget
@@ -61,7 +61,7 @@ app.post("/budget/:id", async(req, res)=> {
                // console.log(err)
              }
              else{
-                console.log(newBudget)
+                console.log("newBudget: " + newBudget)
                 res.send({message: "Budget Saved"})
              }
     //        })
@@ -96,6 +96,7 @@ app.post("/budget/:id", async(req, res)=> {
   app.post("/expense/:id", (req, res)=> {
     const id = req.params.id
     const newObj=req.body.expense;
+    console.log(newObj);
     const newExpense= new Expense({
         userId: id ,
         obj: newObj 
@@ -105,7 +106,7 @@ app.post("/budget/:id", async(req, res)=> {
                 res.send(err)
              }
              else{
-                console.log(newExpense)
+                // console.log(newExpense)
                 res.send({message: "Expense Saved"})
              }
     })

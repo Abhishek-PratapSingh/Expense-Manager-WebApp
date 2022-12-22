@@ -6,8 +6,12 @@ import axios from "axios";
 
 const Setting = () => {
     const navigate = useNavigate()
+    const uuid = require("uuid");
+    uuid.v4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
+    
     const user_id = localStorage.getItem("userId")
-    const [flg , setFlag] =useState()
+   // const [idx , setIdx] =useState(0)
+    let tmpIdx;
     //const { id } = useParams();  //The useParams() hook helps us to access the URL parameters from a current route.  
    const [budget , setBudget] = useState('');
    const [ctg , setCtg] = useState('')
@@ -15,8 +19,11 @@ const Setting = () => {
 
    const [category , setCategory]=useState([])
 
-    const [expense , setExpense] = useState([[]
-      
+    const [expense , setExpense] = useState([
+         {  index:  '',
+            ctgg:  '',
+            vall : ''
+           }
     ]);  
 
 
@@ -53,11 +60,22 @@ const Setting = () => {
       e.preventDefault()
     //   let prev=flg;
       
-      const obj = [
-         ctg ,
-         val
-      ]
-      setExpense(expense => [...expense, obj]);
+      //  const obj = [
+      //    idx,
+      //    ctg,
+      //    val
+      // ]
+      
+
+
+      if(budget - val < 0){
+        alert("Can't add expense, budget is low");
+        return;
+      }
+
+      setBudget(budget-val);
+      
+      setExpense(expense => [...expense, {index : uuid.v4() , ctgg : ctg , vall : val}]);
       console.log(expense);
     }
      
@@ -68,12 +86,34 @@ const Setting = () => {
     }
 
     const deleteExpense = id=>{
-          var idx = expense.map(e=>{
-              return e.id;
-          }).indexOf(id) ;
+        //   var j = expense.map(e=>{
+        //       return e.id
+        //   }).indexOf(id) ;
 
-         expense.splice(idx,1);
-         navigate("/setting")
+        //  expense.splice(j,1);
+        //  console.log(id+' '+j)
+        
+        setExpense(expense.filter(item =>
+           item.index!==id 
+        ))
+        
+        
+        let j= expense.findIndex( x =>{
+           return x.index === id
+        });
+         
+        rebateBudget(expense[j].vall)
+        console.log(j +" "+ id )
+        navigate("/setting")
+    }
+
+    const rebateBudget = e =>{
+      
+      console.log(typeof(budget))
+      console.log(typeof(e))
+
+
+      setBudget(budget + parseInt(e))
     }
 
     return ( 
@@ -110,7 +150,7 @@ const Setting = () => {
             <form onSubmit={ e=> {e.preventDefault()} }> 
             <h5 className="mb-3 ">Define Budget</h5>
                 <div class="form-group">
-                   <input type="number" className="form-control  mb-4" name="budget"  onChange={ e => {onBudgetChange(e)}} placeholder="Enter Budget" required=""/>
+                   <input type="number" className="form-control  mb-4" name="budget"  onChange={ e => {onBudgetChange(e)}} placeholder="Enter Budget" required/>
                 </div>
                   
                 <button onClick={e =>{ axios.post(`http://localhost:5000/budget/${user_id}`,{"budget":budget})}} type="submit" className="btn btn-primary btn-block mt-4">Submit</button>
@@ -122,7 +162,7 @@ const Setting = () => {
               <form onSubmit={handleCategory}> 
             <h5 className="mb-3 ">Define Categories</h5>
                 <div class="form-group">
-                   <input type="text" className="form-control  mb-4" name="category"    onChange={e => addCategory(e)} placeholder="Add Category" required=""/>
+                   <input type="text" className="form-control  mb-4" name="category"    onChange={e => addCategory(e)} placeholder="Add Category" required/>
                 </div>
   
                 <button onClick={e =>{ axios.post(`http://localhost:5000/category/${user_id}`,{"category":category} )} } type="submit" className="btn btn-primary btn-block mt-4">Add Category</button>
@@ -143,7 +183,7 @@ const Setting = () => {
             {/* <input type="text" id=""  className="form-control" placeholder="Search Category" style={{backgroundColor:"#ececec"}}/> */}
               <select name="category-select" id=""  
                     style={{ width : "100rem" }}
-                    onChange={e => addCategory(e)} >
+                    onChange={e => addCategory(e)} required >
                         /<option value="" />
                     {category.map(e => {
                     return <option value={e}>{e}</option>;
@@ -154,7 +194,7 @@ const Setting = () => {
              <br />
                 
                 <div class="form-group">
-                   <input type="number" className="form-control  mb-4" name="val" onChange={e => onValueChange(e)} placeholder="Enter Amount" required=""/>
+                   <input type="number" className="form-control  mb-4" name="val" onChange={e => onValueChange(e)} placeholder="Enter Amount" required/>
                 </div>
   
                 <button onClick={e =>{ axios.post(`http://localhost:5000/expense/${user_id}`,{"expense":expense})}} type="submit" className="btn btn-primary btn-block mt-4">Submit</button>
@@ -194,14 +234,25 @@ const Setting = () => {
              expense.map((e,i) =>{
                 return ( <tr>
                      
-                     {e.map(val=>{
-                        return <td > {val} </td> 
-                       }) } 
+
+                      <td> {e.ctgg} </td>
+                      <td> {e.vall}  </td>
+
+                     {/* {e.map(val=>{
+                        
+                        if(Number.isInteger(val)){
+                          tmpIdx=val;
+                          console.log("tmpIdx: " + tmpIdx)
+                          return ;
+                        }
+                        else  return <td > {val} </td> 
+
+                       }) }  */}
 
                      { i > 0 ? 
                      <td> 
-                         <button onClick={e=>{}} style={{backgroundColor:"LightGreen"}} > Edit</button>
-                         <button onClick={e=>{deleteExpense(i)}} style={{backgroundColor:"Orange"}} > Delete</button>
+                         <button onClick={f=>{}} style={{backgroundColor:"LightGreen"}} value='tmpIdx' > Edit</button>
+                         <button value={e.index}  onClick={f=>{deleteExpense(f.target.value)}} style={{backgroundColor:"Orange"}}  > Delete</button>
                      </td>
 
                       : 

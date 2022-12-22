@@ -88,7 +88,9 @@ const Home = () => {
  
       <div class="container">  
         <br />
-        <h2 style ={{marginTop: "5rem" }} >Welcome to home page! </h2> 
+        <h2 style ={{marginTop: "5rem" }} >Welcome to home page! </h2>
+        <hr /> 
+        <h3 style ={{marginLeft: "5rem" , marginRight:"5rem" }} > Manage your expense and budget here!  </h3>
         <button  onClick={async e =>{
 
               navigate("/setting") }}  className="btn btn-primary btn-block mt-4" > Click here to go to Setting of expenses</button>
