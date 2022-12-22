@@ -17,6 +17,8 @@ const Setting = () => {
    const [ctg , setCtg] = useState('')
    const [val , setVal] =useState('')
 
+   const[newId,setNewId] = useState('')
+
    const [category , setCategory]=useState([])
 
     const [expense , setExpense] = useState([
@@ -82,16 +84,10 @@ const Setting = () => {
     const style1={
       display : "flex" ,
       justifyContent : "space-between", 
-      backgroundColor:"lavender"
+      backgroundColor:"azure"
     }
 
     const deleteExpense = id=>{
-        //   var j = expense.map(e=>{
-        //       return e.id
-        //   }).indexOf(id) ;
-
-        //  expense.splice(j,1);
-        //  console.log(id+' '+j)
         
         setExpense(expense.filter(item =>
            item.index!==id 
@@ -116,9 +112,43 @@ const Setting = () => {
       setBudget(budget + parseInt(e))
     }
 
+    const editExpense = id =>{
+
+        let j= expense.findIndex( x =>{
+          return x.index === id
+        });
+       
+        setNewId(j);
+    }
+
+    const handleEditExpense = e=>{
+          
+          e.preventDefault()
+          // expense[i].ctgg= obj.selectedCategory
+          // expense[i].vall=obj.val  
+          const obj=Object.fromEntries(new FormData(e.target));
+          console.log(obj.selectedCategory);
+          
+          if(obj.val > budget){
+            alert("Please enter value with the Budget")
+            return ;
+          }
+          
+          let i=parseInt(newId)
+          console.log(i)
+          let temp= expense[i].index
+          setBudget(budget + parseInt(expense[i].vall) - parseInt(obj.val)) 
+          setExpense([...expense.slice(0,i), { index: temp , ctgg: obj.selectedCategory , vall : obj.val} , ...expense.slice(i+1)])
+
+          alert("Expense Successfully edited")
+          setNewId('')
+          axios.post(`http://localhost:5000/expense/${user_id}`,{"expense":expense})
+          navigate('/setting')
+    }
+     
     return ( 
 
-    <div>
+    <div style={{backgroundColor: "powderBlue"}}>
       <nav className="navbar navbar-expand-lg bg-light">
         <div className="container-fluid">
           <Link to="/" className="navbar-brand" href="#">Home</Link>
@@ -141,13 +171,13 @@ const Setting = () => {
         </div>
       </nav>
  
-      <div class="container">  
+      <div class="container" >  
     
       <div class="">
        <div class="">
-          <div className="box p-3 mb-3 mt-5" style={{border:"3px solid #d0d0d0"}}>
-          <div  style={style1} > 
-            <form onSubmit={ e=> {e.preventDefault()} }> 
+          <div className="box p-3 mb-3 mt-5" style={{border:"3px solid #d0d0d0" , backgroundColor: "#588ebb"}}>
+          <div  style={style1}> 
+            <form onSubmit={ e=> {e.preventDefault()}}> 
             <h5 className="mb-3 ">Define Budget</h5>
                 <div class="form-group">
                    <input type="number" className="form-control  mb-4" name="budget"  onChange={ e => {onBudgetChange(e)}} placeholder="Enter Budget" required/>
@@ -174,12 +204,12 @@ const Setting = () => {
 
       <div class="">
        <div class="">
-          <div className="box p-3 mb-3 mt-5" style={{border:"3px solid #d0d0d0" , backgroundColor:"lavender"} }>
+          <div className="box p-3 mb-3 mt-5" style={{border:"5px solid #d0d0d0" , backgroundColor:"#588ebb"} }>
             
-            <form  onSubmit={handleExpense}> 
+            <form  onSubmit={handleExpense} style={{border:"5px solid #d0d0d0" , backgroundColor:"azure"} }> 
             <h5 className="mb-3" >Add Expenses</h5>
                 
-            <div class="form-group" style={style1} >
+            <div class="form-group" style={style1}>
             {/* <input type="text" id=""  className="form-control" placeholder="Search Category" style={{backgroundColor:"#ececec"}}/> */}
               <select name="category-select" id=""  
                     style={{ width : "100rem" }}
@@ -210,13 +240,11 @@ const Setting = () => {
          <br />
          <br /> 
          <hr />
-        <h3 className="text-center mb-4"> Budget: {budget} </h3>
+        <h3 className="text-center mb-4" > Budget: {budget} </h3>
 
-        <br />
-      <div className="container">
+      <div className="container "  >
      <div className="row mt-4"> 
-      <div className="col-sm-5 col-offset-3 mx-auto shadow p-5">
-
+      <div className="col-sm-5 col-offset-3 mx-auto shadow p-5" style={{border:"5px solid #d0d0d0" , backgroundColor: "Azure"}}>
      
 
         <h4 className="text-center mb-4">Expense Chart</h4>
@@ -251,7 +279,7 @@ const Setting = () => {
 
                      { i > 0 ? 
                      <td> 
-                         <button onClick={f=>{}} style={{backgroundColor:"LightGreen"}} value='tmpIdx' > Edit</button>
+                         <button value={e.index}  onClick={f=>{editExpense(f.target.value)}} style={{backgroundColor:"LightGreen"}}  > Edit</button>
                          <button value={e.index}  onClick={f=>{deleteExpense(f.target.value)}} style={{backgroundColor:"Orange"}}  > Delete</button>
                      </td>
 
@@ -269,7 +297,44 @@ const Setting = () => {
           </div>
       </div> 
     </div>
+   
+   <br />
+        { newId!=='' ?
+    <div className="container">
+     <div className="row mt-4"> 
+      <div className="col-sm-5 col-offset-3 mx-auto shadow p-5" style={{marginBottom:"2rem" ,  border:"5px solid #d0d0d0" , backgroundColor: "Azure"}}>
 
+        
+        <h4 className="text-center mb-4">Edit Expense</h4> 
+        <form  onSubmit={e=> handleEditExpense(e)}> 
+            {/* <h5 className="mb-3" >Edit your Expense</h5> */}
+                
+            <div class="form-group" style={style1} >
+            {/* <input type="text" id=""  className="form-control" placeholder="Search Category" style={{backgroundColor:"#ececec"}}/> */}
+              <select name="selectedCategory" id=""  
+                    style={{ width : "100rem" }}
+                    onChange={e => addCategory(e)} required >
+                        /<option value="" />
+                    {category.map(e => {
+                    return <option value={e}>{e}</option>;
+                    })}
+                </select>  
+                
+              </div>
+             <br />
+                
+                <div class="form-group">
+                   <input type="number" className="form-control  mb-4" name="val"  placeholder="Enter Amount" required/>
+                </div>
+  
+                <button type="submit" className="btn btn-primary btn-block mt-4">Submit</button>
+        
+             </form> 
+           </div> </div> </div>
+
+           : console.log('Nothing to edit ')
+     }          
+                  
         </div>
      );
 }

@@ -12,7 +12,7 @@ const Logout = ({setLoginUser}) => {
        },[])
 
     return ( 
-        <div>
+        <div style ={{backgroundColor : "#b5cde1" , height: "50rem"}}>
         <nav className="navbar navbar-expand-lg bg-light">
           <div className="container-fluid">
             <Link to="/" className="navbar-brand" href="#">Home</Link>
@@ -35,8 +35,8 @@ const Logout = ({setLoginUser}) => {
           </div>
         </nav>
 
-        <div className='logout'>
-            <br /><br />
+        <div className='logout' style={{paddingTop:"7rem"}} >
+            <br />
             <h2>You have successfully logged out !</h2>
             <h2>Login to join again</h2>
         </div>
