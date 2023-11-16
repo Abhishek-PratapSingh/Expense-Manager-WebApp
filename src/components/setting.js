@@ -13,7 +13,7 @@ const Setting = () => {
    // const [idx , setIdx] =useState(0)
     let tmpIdx;
     //const { id } = useParams();  //The useParams() hook helps us to access the URL parameters from a current route.  
-   const [budget , setBudget] = useState('');
+   const [budget , setBudget] = useState(0);
    const [ctg , setCtg] = useState('')
    const [val , setVal] =useState('')
 
@@ -31,6 +31,7 @@ const Setting = () => {
 
    const onBudgetChange =  e =>{
        e.preventDefault()
+       if(e.target.value > 0)
        setBudget(e.target.value);
        console.log(budget);
    }
@@ -128,14 +129,14 @@ const Setting = () => {
           // expense[i].vall=obj.val  
           const obj=Object.fromEntries(new FormData(e.target));
           console.log(obj.selectedCategory);
-          
-          if(obj.val > budget){
-            alert("Please enter value with the Budget")
+          let i = parseInt(newId)
+          console.log(budget + expense[i].vall)
+         
+          if(parseInt(obj.val) > parseInt(budget) + parseInt(expense[i].vall)){
+            alert("Please enter value within the Budget")
             return ;
           }
           
-          let i=parseInt(newId)
-          console.log(i)
           let temp= expense[i].index
           setBudget(budget + parseInt(expense[i].vall) - parseInt(obj.val)) 
           setExpense([...expense.slice(0,i), { index: temp , ctgg: obj.selectedCategory , vall : obj.val} , ...expense.slice(i+1)])
@@ -177,7 +178,7 @@ const Setting = () => {
        <div class="">
           <div className="box p-3 mb-3 mt-5" style={{border:"3px solid #d0d0d0" , backgroundColor: "#588ebb"}}>
           <div  style={style1}> 
-            <form onSubmit={ e=> {e.preventDefault()}}> 
+            <form onSubmit={e => {e.preventDefault();  if(budget> 0)alert("Budget added"); else alert("Please entern non-negative budget") }}> 
             <h5 className="mb-3 ">Define Budget</h5>
                 <div class="form-group">
                    <input type="number" className="form-control  mb-4" name="budget"  onChange={ e => {onBudgetChange(e)}} placeholder="Enter Budget" required/>
