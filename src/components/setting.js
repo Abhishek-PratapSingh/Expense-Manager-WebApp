@@ -11,7 +11,7 @@ const Setting = () => {
     
     const user_id = localStorage.getItem("userId")
    // const [idx , setIdx] =useState(0)
-    let tmpIdx;
+    // let tmpIdx;
     //const { id } = useParams();  //The useParams() hook helps us to access the URL parameters from a current route.  
    const [budget , setBudget] = useState(0);
    const [ctg , setCtg] = useState('')
@@ -28,7 +28,25 @@ const Setting = () => {
            }
     ]);  
 
+   useEffect(()=>{
 
+    const auto = async()=>{
+      const b = await axios.get(`http://localhost:5000/budget/${user_id}`);
+      const c = await axios.get(`http://localhost:5000/category/${user_id}`);
+      const e = await axios.post(`http://localhost:5000/expense/${user_id}`);
+
+      console.log(b.data.data.amount);
+      console.log(`fetched categories ${c.data.data.ctg}`);
+      setBudget(b.data.data.amount)
+      setCategory(c.data.data.ctg)
+      // setExpense(e.data.data.obj)
+      // console.log(e.data.data.obj); 
+    }
+  
+    auto(); 
+
+   },[])  
+    
    const onBudgetChange =  e =>{
        e.preventDefault()
        if(e.target.value > 0)
@@ -45,11 +63,12 @@ const Setting = () => {
     // console.log(category)
    }
 
-   const handleCategory=e=>{
+   const handleCategory= async e=>{
     e.preventDefault();
     setCategory(category => [...category, ctg]);
-    console.log(category)
+    console.log(`category array: ${category}`)
     alert('catergory added')
+    await axios.post(`http://localhost:5000/category/${user_id}`,{"category":category})
     // console.log("hi")
    }
 
@@ -61,15 +80,6 @@ const Setting = () => {
 
     const handleExpense = (e)=>{
       e.preventDefault()
-    //   let prev=flg;
-      
-      //  const obj = [
-      //    idx,
-      //    ctg,
-      //    val
-      // ]
-      
-
 
       if(budget - val < 0){
         alert("Can't add expense, budget is low");
@@ -196,7 +206,7 @@ const Setting = () => {
                    <input type="text" className="form-control  mb-4" name="category"    onChange={e => addCategory(e)} placeholder="Add Category" required/>
                 </div>
   
-                <button onClick={e =>{ axios.post(`http://localhost:5000/category/${user_id}`,{"category":category} )} } type="submit" className="btn btn-primary btn-block mt-4">Add Category</button>
+                <button type="submit" className="btn btn-primary btn-block mt-4">Add Category</button>
              </form>
              
         </div>

@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 const expense = new Schema({
     userId: {type : String , require:true },
     obj : [{
-      ctg: {type : String },
-      val: { type: Number }
+      index : {type : String, required: true},
+      ctg: {type : String , required: true},
+      val: { type: Number , required: true}
      }]
-  }, {
-  timestamps: true,
+
 });
 
 const Expense = mongoose.model('Expense', expense);
